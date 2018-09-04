@@ -48,20 +48,45 @@ public class HibernateTest {
 	private static void createData() {
 		runInTransaction(() -> {
 
-			CustomerEntity customer = new CustomerEntity("Customer-1");
-			entityManager.persist(customer);
-
+			CustomerEntity customer;
 			OrderEntity orderEntity;
 			OrderEntity orderEntity1;
 
-			orderEntity = new OrderEntity("T1", "T1-P");
+			customer = new CustomerEntity("Customer-1");
+			entityManager.persist(customer);
+
+			orderEntity = new OrderEntity("Package", "p1");
 			orderEntity.setCustomer(customer);
 			entityManager.persist(orderEntity);
 
-			orderEntity1 = new OrderEntity("T1", "T1-C1");
+			orderEntity = new OrderEntity("Package", "p2");
+			orderEntity.setCustomer(customer);
+			entityManager.persist(orderEntity);
+
+			orderEntity1 = new OrderEntity("Element", "p2-e1");
 			orderEntity1.setParent(orderEntity);
 			orderEntity1.setCustomer(customer);
 			entityManager.persist(orderEntity1);
+
+			customer = new CustomerEntity("Customer-2");
+			entityManager.persist(customer);
+
+			orderEntity = new OrderEntity("Package", "p3");
+			orderEntity.setCustomer(customer);
+			entityManager.persist(orderEntity);
+
+			orderEntity1 = new OrderEntity("Element", "p3-e1");
+			orderEntity1.setParent(orderEntity);
+			orderEntity1.setCustomer(customer);
+			entityManager.persist(orderEntity1);
+
+			orderEntity1 = new OrderEntity("Element", "p3-e2");
+			orderEntity1.setParent(orderEntity);
+			orderEntity1.setCustomer(customer);
+			entityManager.persist(orderEntity1);
+
+			customer = new CustomerEntity("Customer-3");
+			entityManager.persist(customer);
 
 		});
 	}
