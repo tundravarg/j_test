@@ -11,6 +11,7 @@ import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import tumnis.j_test.hibernate.entity.CustomerEntity;
@@ -45,7 +46,7 @@ public class HibernateTest {
 		System.out.println("Hibernate Test");
 		createData();
 		listData();
-		listOrdersByType("Element");
+		listOrdersByTypeAndCustomerName("Element", "Customer-2");
 	}
 
 
@@ -107,19 +108,26 @@ public class HibernateTest {
 		});
 	}
 
-	private static void listOrdersByType(String orderType) {
+	private static void listOrdersByTypeAndCustomerName(String orderType, String cutomerName) {
 		runInTransaction(() -> {
 
 			CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-			CriteriaQuery<OrderEntity> cq = cb.createQuery(OrderEntity.class);
-			Root<OrderEntity> cr = cq.from(OrderEntity.class);
-			cq.select(cr);
-			cq.where(cb.equal(cr.get("type"), orderType));
-			TypedQuery<OrderEntity> query = entityManager.createQuery(cq);
-			List<OrderEntity> result = query.getResultList();
+			CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+			Root<OrderEntity> orderRoot = cq.from(OrderEntity.class);
+			Root<CustomerEntity> customerRoot = cq.from(CustomerEntity.class);
+			cq.multiselect(orderRoot, customerRoot);
 
-			for (OrderEntity order: result) {
-				System.out.printf("order-by-type: %s\n", order);
+			Predicate jointPredicate = cb.equal(orderRoot.get("customer"), customerRoot.get("id"));
+			Predicate orderTypePredicate = cb.equal(orderRoot.get("type"), orderType);
+			Predicate customerNamePredicate = cb.equal(customerRoot.get("name"), cutomerName);
+			Predicate predicate = cb.and(jointPredicate, orderTypePredicate, customerNamePredicate);
+			cq.where(predicate);
+
+			TypedQuery<Object[]> query = entityManager.createQuery(cq);
+			List<Object[]> result = query.getResultList();
+
+			for (Object[] order: result) {
+				System.out.printf("order-by-type: %s\n", order[0]);
 			}
 
 		});
