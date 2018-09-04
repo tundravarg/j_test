@@ -1,0 +1,22 @@
+DROP TABLE IF EXISTS "customer" CASCADE;
+
+CREATE TABLE "customer"
+(
+	"id" INTEGER AUTO_INCREMENT PRIMARY KEY,
+	"name" VARCHAR,
+);
+
+
+
+DROP TABLE IF EXISTS "order" CASCADE;
+
+CREATE TABLE "order"
+(
+	"id" INTEGER AUTO_INCREMENT PRIMARY KEY,
+	"name" VARCHAR,
+	"type" VARCHAR,
+	"parent" INTEGER,
+	"customer" INTEGER,
+
+	FOREIGN KEY ("parent") REFERENCES "order" ("id")
+);
