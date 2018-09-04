@@ -111,15 +111,15 @@ public class HibernateTest {
 		runInTransaction(() -> {
 
 			CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-			CriteriaQuery<String> cq = cb.createQuery(String.class);
+			CriteriaQuery<OrderEntity> cq = cb.createQuery(OrderEntity.class);
 			Root<OrderEntity> cr = cq.from(OrderEntity.class);
-			cq.select(cr.get("name"));
+			cq.select(cr);
 			cq.where(cb.equal(cr.get("type"), orderType));
-			TypedQuery<String> query = entityManager.createQuery(cq);
-			List<String> result = query.getResultList();
+			TypedQuery<OrderEntity> query = entityManager.createQuery(cq);
+			List<OrderEntity> result = query.getResultList();
 
-			for (String order: result) {
-				System.out.printf("order: %s\n", order);
+			for (OrderEntity order: result) {
+				System.out.printf("order-by-type: %s\n", order);
 			}
 
 		});
