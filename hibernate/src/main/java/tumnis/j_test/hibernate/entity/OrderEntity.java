@@ -32,8 +32,9 @@ public class OrderEntity {
 	@JoinColumn(name="parent")
 	private OrderEntity parent;
 
-	@Column
-	private int customer;
+	@ManyToOne(targetEntity=CustomerEntity.class, fetch=FetchType.LAZY, optional=true)
+	@JoinColumn(name="customer")
+	private CustomerEntity customer;
 
 
 
@@ -49,7 +50,7 @@ public class OrderEntity {
 
 	@Override
 	public String toString() {
-		return String.format("{ id: %d, type: '%s', name: '%s', parent: %s }", id, type, name, parent);
+		return String.format("{ id: %d, type: '%s', name: '%s', parent: %s, customer: %s }", id, type, name, parent, customer);
 	}
 
 
@@ -78,11 +79,11 @@ public class OrderEntity {
 		this.parent = parent;
 	}
 
-	public int getCustomer() {
+	public CustomerEntity getCustomer() {
 		return customer;
 	}
 
-	public void setCustomer(int customer) {
+	public void setCustomer(CustomerEntity customer) {
 		this.customer = customer;
 	}
 

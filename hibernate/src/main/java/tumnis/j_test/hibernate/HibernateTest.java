@@ -9,6 +9,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
+import tumnis.j_test.hibernate.entity.CustomerEntity;
 import tumnis.j_test.hibernate.entity.OrderEntity;
 
 
@@ -47,14 +48,19 @@ public class HibernateTest {
 	private static void createData() {
 		runInTransaction(() -> {
 
+			CustomerEntity customer = new CustomerEntity("Customer-1");
+			entityManager.persist(customer);
+
 			OrderEntity orderEntity;
 			OrderEntity orderEntity1;
 
 			orderEntity = new OrderEntity("T1", "T1-P");
+			orderEntity.setCustomer(customer);
 			entityManager.persist(orderEntity);
 
 			orderEntity1 = new OrderEntity("T1", "T1-C1");
 			orderEntity1.setParent(orderEntity);
+			orderEntity1.setCustomer(customer);
 			entityManager.persist(orderEntity1);
 
 		});
