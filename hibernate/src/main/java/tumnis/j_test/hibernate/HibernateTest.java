@@ -8,6 +8,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import tumnis.j_test.hibernate.entity.CustomerEntity;
 import tumnis.j_test.hibernate.entity.OrderEntity;
@@ -41,6 +45,7 @@ public class HibernateTest {
 		System.out.println("Hibernate Test");
 		createData();
 		listData();
+		listOrdersByType("Element");
 	}
 
 
@@ -96,6 +101,24 @@ public class HibernateTest {
 
 			List<OrderEntity> orders = entityManager.createQuery("from OrderEntity").getResultList();
 			for (OrderEntity order: orders) {
+				System.out.printf("order: %s\n", order);
+			}
+
+		});
+	}
+
+	private static void listOrdersByType(String orderType) {
+		runInTransaction(() -> {
+
+			CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+			CriteriaQuery<String> cq = cb.createQuery(String.class);
+			Root<OrderEntity> cr = cq.from(OrderEntity.class);
+			cq.select(cr.get("name"));
+			cq.where(cb.equal(cr.get("type"), orderType));
+			TypedQuery<String> query = entityManager.createQuery(cq);
+			List<String> result = query.getResultList();
+
+			for (String order: result) {
 				System.out.printf("order: %s\n", order);
 			}
 
